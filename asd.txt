@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Bootstrap Example</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+<style type="text/css">
+  #supplier_table thead th, td {
+    text-align: center;
+  }
+  #supplier_table tbody input:disabled {
+    border: none;
+    border-color: transparent;
+    background-color: transparent;
+    outline: none;
+    box-shadow: inset 0px 0px 0px 0px red;
+  }
+</style>
+<body>
+
+  <div class="container">
+    <h2>Bordered Table</h2>
+    <p>The .table-bordered class adds borders to a table:</p>
+    <button type="button" class="btn btn-default" id="add_supplier">Add Supplier</button>
+    <!-- <button type="button" class="btn btn-default" id="add_item">Add Item</button> -->
+    <button type="button" class="btn btn-default" id="add_terms">Add Terms</button>
+    <table class="table table-bordered" id="supplier_table">
+      <thead>
+        <tr id="first-header">
+          <th></th>
+          <th></th>
+          <th colspan="2" class="supplier_name" id="supplier_name-1"><input type="text" class="form-control" placeholder="Enter Supplier" style="text-align: center;"></th>
+        </tr>
+        <tr id="second-header">
+          <th>Item</th>
+          <th>Qty</th>
+          <th>Price</th>
+          <th>Total</th>
+        </tr>
+      </thead>
+      <tbody id="tb">
+
+        <tr class="tbody-tr">
+          <td class="ignore"><input type="text" class="form-control" value="Mouse" readonly=""></td>
+          <td class="ignore"><input type="text" class="form-control qty" value="10" readonly=""></td>
+          <td class="ignore"><input type="text" class="form-control price"></td>
+          <td><input type="text" class="form-control total for_sum-1" readonly=""></td>
+        </tr>
+        <tr class="tbody-tr">
+          <td class="ignore"><input type="text" class="form-control" value="Keyboard" readonly=""></td>
+          <td class="ignore"><input type="text" class="form-control qty" value="20" readonly=""></td>
+          <td class="ignore"><input type="text" class="form-control price"></td>
+          <td><input type="text" class="form-control total for_sum-1" readonly=""></td>
+        </tr>
+        <tr class="tbody-tr">
+          <td class="ignore"><input type="text" class="form-control " value="Monitor" readonly=""></td>
+          <td class="ignore"><input type="text" class="form-control qty" value="30" readonly=""></td>
+          <td class="ignore"><input type="text" class="form-control price"></td>
+          <td><input type="text" class="form-control total for_sum-1" readonly=""></td>
+        </tr>
+        <tr id="totals">
+          <td class="ignore"></td>
+          <td class="ignore"></td>
+          <td class="ignore"><input class="form-control" disabled value="Grand Total : " style="text-align: right;"></td>
+          <td><input type="text" class="form-control grandtotal text-right" readonly=""></td>
+        </tr>
+
+        <tr id="tr-td-2">
+          <td ><p style="width: 60px;"></p></td>
+          <td><input style="font-weight: bold; text-align: right;" type="text" class="form-control" placeholder="Enter terms"></td>
+          <!-- <td ><p style="width: 60px;"></p></td> -->
+          <td colspan="2" style="width: 160px;"><input style="text-align: center;" class="form-control" type="text"></td>
+        </tr>
+      </tbody>
+      <!-- <table class="table table-bordered" id="grandtotal">
+        <thead>
+          <tr>
+          </tr>
+        </thead>
+        <tbody id="totals">
+          <tr>
+            <td class="ignore"><input class="form-control" disabled=""></td>
+            <td class="ignore"><input class="form-control" disabled=""></td>
+            <td class="ignore"><input class="form-control" disabled value="Grand Total : " style="text-align: right;"></td>
+            <td><input type="text" class="form-control grandtotal text-right" readonly=""></td>
+          </tr>
+        </tbody>
+      </table> -->
+    </table>
+  </div>
+</body>
+</html>
+
+<script>
+$(function(){
+
+    $('#add_supplier').click(function(){
+        
+        $('#supplier_table > thead > tr#first-header').append(
+            '<th colspan="2" class="supplier_name"><input type="text" class="form-control" placeholder="Enter Supplier" style="text-align: center;"></th>'
+        );
+
+        $('#supplier_table > thead > tr#second-header').append(
+            '<th>Price</th>'+
+            '<th>Total</th>'
+        );
+
+        $('#supplier_table > tbody > tr').not('#totals,#tr-td-2').append(
+            '<td class="ignore"><input type="text" class="form-control price text-right" ></td>'+
+            '<td><input type="text" class="form-control total text-right" readonly></td>'
+        );
+
+        $('#supplier_table > tbody > #totals').not('#tr-td-2').append(
+            '<td class="ignore"><input class="form-control" disabled></td>'+
+            '<td><input type="text" class="form-control grandtotal text-right" readonly=""></td>'
+        );
+
+        $('#supplier_table > tbody > #tr-td-2').append(
+            '<td colspan="2" style="width: 160px;"><input style="text-align: center;" class="form-control" type="text"></td>'
+        );
+
+        //
+        refresh_index();
+
+        //
+    });
+
+    $('#add_terms').click(function(){
+      var $tableBody = $('#supplier_table').find("tbody").not('#totals'),
+      $trLast = $tableBody.find("tr:last"),
+
+      $trNew = $trLast.clone();
+      $trNew.find('input').val('');
+      $trLast.after($trNew);
+
+      refresh_index();
+    });
+
+    // $('#add_supplier').click();
+
+    $('#add_item').click(function(){
+
+        $('#supplier_table > tbody').not('#totals, #tr-td-2').append(
+          // $("#supplier_table tbody tr:last").clone()
+          '<tr class="tbody-tr">'+
+           '<td class="ignore"><input type="text" class="form-control " value="Monitor" readonly=""></td>'+
+            '<td class="ignore"><input type="text" class="form-control qty" value="30" readonly=""></td>'+
+            '<td class="ignore"><input type="text" class="form-control price"></td>'+
+            '<td><input type="text" class="form-control total for_sum-1" readonly=""></td>'+
+          '</tr>'
+        );
+
+        //        
+        refresh_index();
+
+        //
+    });
+
+    //
+    function refresh_index() {
+
+        $('.price').each(function(i) {
+
+            i++;
+        
+            $(this).attr('id','price-'+i);
+            $(this).attr('data-num',i);
+
+            event_handler();
+        });
+
+        $('.total').each(function(i) {
+
+            i++;
+
+            $(this).attr('id','total-'+i);
+        });
+
+        $('.qty').each(function(i) {
+
+            i++;
+
+            $(this).attr('id', 'qty-'+i);
+
+        });
+
+        $('.grandtotal').each(function(i) {
+
+            i++;
+
+            $(this).attr('id', 'grandtotal-'+i);
+            
+        });
+
+        $('.supplier_name').each(function(i) {
+
+            i++;
+            $(this).attr('id', 'supplier_name-'+i);
+            
+        });
+
+        
+    }
+    refresh_index();
+
+    //
+
+    //
+    function event_handler() {
+
+        
+        $('.price').unbind('keyup').bind('keyup', function() {
+            
+            var id = this.id;
+            var num = id.split('-');
+
+            var pos = $(this).closest('tr').index() + 1;
+        
+            var qty = $('#qty-'+pos).val();
+            var price = $(this).val();
+
+            var total = parseFloat(qty) * parseFloat(price);
+
+            if(isNaN(total)) {
+              var total = 0;
+            }
+    
+            $('#total-'+num[1]).text(total);
+            $('#total-'+num[1]).val(total);
+
+            var num_of_supplier_name = $('.supplier_name').length;
+            sum_of_total();
+
+            
+        });
+    }
+
+    function sum_of_total(){
+            // var sum = 0;
+            // //iterate through each textboxes and add the values
+            // $(".total").each(function () {
+            //     //add only if the value is number
+            //     if (!isNaN($(this).val()) && $(this).val().length != 0) {
+            //         sum += parseFloat(this.value);
+            //     }
+            // });
+            // //.toFixed() method will roundoff the final sum to 2 decimal places
+            // $("#grandtotal-"+num).val(sum);
+            var totals = [];
+            $('#tb').find('tr').each(function() {
+              var $row = $(this);
+
+              $row.children('td').not('.ignore').each(function(index) {
+                totals[index] = totals[index] || 0;
+                totals[index] += parseInt($(this).text()) || 0;
+              });
+            })
+
+            $('#totals td').not('.ignore').each(function(index) {
+              // $(this).text(totals[index]);
+              var id = index+1;
+              $('#grandtotal-'+id).val(totals[index]);
+            });
+
+            $("#tb").on("click", "tr", function() {
+              $(this).find("td").slice(0, 4).prop("contenteditable", true);
+            });
+
+            // var max = 0;
+            // $('.grandtotal').each(function()
+            // {
+            //    $this = parseInt( $(this).val() );
+            //    // console.log($this);
+            //    if ($this > max) {
+            //     max = $this;
+            //     }
+            //     // $('.grandtotal').val(max).css('background-color','yellow');
+            //     // console.log('Lowest Offer : '+max);
+            // });
+            //  console.log('Lowest Offer : '+max);
+            
+
+            // var high = Math.min.apply(Math, $('.grandtotal').map(function(){
+            // return $(this).val()
+            // }))
+            // console.log('Lowest Offer : '+high);
+
+            var vals = $('.grandtotal').map(function () {
+                return parseInt($(this).val(), 10) ? parseInt($(this).val(), 10) :  null;
+            }).get();
+
+            // then find their minimum
+            var min = Math.min.apply(Math, vals);
+            console.log(min);
+
+            // tag any cell matching the min value
+            $('.grandtotal').filter(function () {
+                // return parseInt($(this).val(), 10) === min;
+                if (parseInt($(this).val(), 10) === min) {
+                  $(this).css("background-color", "#dff0d8");
+                }else{
+                  $(this).css("background-color", "transparent");
+                }
+            });
+
+
+
+
+    }
+
+    //
+
+
+});
+</script>
